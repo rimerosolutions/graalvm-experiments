@@ -1,8 +1,8 @@
 #+TITLE: Graalvm experiments with a basic spring boot application
 
-This project is not ready for copy-paste and pushing to PROD blindly...
-- Depending on how the code is written you may also run into [[https://github.com/oracle/graal/issues][GraalVM]] limitations by extending this program.
-- The main source of information that I found is the GraalVM Github issue tracker and some isolated articles online.
+This project is unpolished, it's not ready for copy-paste and pushing to PROD blindly...
+- Depending on how the code is written you may also run into [[https://www.graalvm.org/][GraalVM]] limitations by extending this program.
+- The main source of information that I found is the [[https://github.com/oracle/graal/issues][GraalVM Github issue tracker]] and some isolated articles online.
 
 
 * About the spring app
