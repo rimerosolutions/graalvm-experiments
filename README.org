@@ -1,13 +1,15 @@
 #+TITLE: Graalvm experiments with a basic spring boot application
 
 This project is not ready for copy-paste and pushing to PROD blindly...
-- Depending on how the code is written you may also run into Graalvm limitations by extending this program.
+- Depending on how the code is written you may also run into [[https://github.com/oracle/graal/issues][GraalVM]] limitations by extending this program.
 - The main source of information that I found is the GraalVM Github issue tracker and some isolated articles online.
 
 
 * About the spring app
-I just did some experiments with Spring Boot and GraalVM based on a existing Github project.
+I just did some experiments with [[http://spring.io/projects/spring-boot][Spring Boot]] and GraalVM based on a existing Github project.
 This required some ""exploration" to run on Docker successfully.
+
+[[./screenshot.png]]
 
 * Requirements
 
@@ -17,7 +19,7 @@ This required some ""exploration" to run on Docker successfully.
 * Building
 
 =dockerbuild.sh= will trigger the docker build and create a `springdemo` image.
-- The spring boot application itself employs Gradle instead of Maven for speeding up the multi-stage build and not downloading all the jars on the internet.
+- The spring boot application itself employs [[https://gradle.org/][Gradle]] instead of [[http://maven.apache.org/][Maven]] for speeding up the multi-stage build and not downloading all the jars on the internet.
 - More details can be found in the =Dockerfile= which is rather small
 
 * Resulting docker image
@@ -26,10 +28,10 @@ This required some ""exploration" to run on Docker successfully.
 
 While the build process to native code takes a bit of time, the resulting image runs on top of a minimal busybox+glibc layer.
 
-Traditionally, most Java docker images will be usually :
-- at least 40MB+ (Just for a JRE) 
-- couple of MBs for the base Linux system (Alpine, Busybox) unless using moderately bloated Linux images (Fedora, Debian, etc.)
-- Few MBs for dealing with glibc required libraries, especially for apps that require networking (cryptic GraalVM crashes)
+Traditionally, most Java docker images will be usually share similar characteristics:
+- At least 30MB+ (*Just for a JRE*) 
+- Couple of MBs for the base Linux system (Alpine, Busybox) unless using moderately bloated Linux images (Fedora, Debian, etc.)
+- Few MBs for dealing with [[https://www.gnu.org/software/libc/][GLibc]] required libraries, especially for apps that require networking ([[https://github.com/oracle/graal/issues/386][cryptic crashes]])
 - The Spring application size would mainly depend on how many dependencies you have and how complex the program is
 
 #+BEGIN_SRC sh 
@@ -47,8 +49,8 @@ busybox             1.29.2-glibc        c041448940c8        6 weeks ago         
 ** Speed
 
 While I haven't measured or benchmarked anything, it feels faster, especially the startup time.
-
+Memory usage would have to also be checked over time with samples.
 
 ** Signal handling
 
-The final image has a small init system for handling signals (=control-c= on the terminal, etc.) without running continuously =docker stop insert_id_here=.
+The final image has a [[https://github.com/krallin/tini][small init system (Tini)]] for handling signals (=control-c= on the terminal, etc.) without running continuously =docker stop insert_id_here=.

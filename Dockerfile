@@ -26,6 +26,6 @@ FROM busybox:1.29.2-glibc
 WORKDIR /usr/bin
 COPY --from=build-env /usr/bin/springdemo /usr/bin/springdemo
 ENV TINI_VERSION v0.18.0
-ONBUILD ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /usr/bin/tinit
-ONBUILD RUN chmod +x /usr/bin/tinit
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /usr/bin/tinit
+RUN chmod +x /usr/bin/tinit
 ENTRYPOINT [ "/usr/bin/tinit", "--", "/usr/bin/springdemo" ]
