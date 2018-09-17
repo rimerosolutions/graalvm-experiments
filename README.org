@@ -6,7 +6,7 @@ This project is unpolished, it's not ready for copy-paste and pushing to PROD bl
 
 
 * About the spring app
-I just did some experiments with [[http://spring.io/projects/spring-boot][Spring Boot]] and GraalVM based on a existing Github project.
+I just did some experiments with [[http://spring.io/projects/spring-boot][Spring Boot]] and GraalVM based on a [[https://github.com/sdeleuze/spring-boot-graal-demo][existing Github project]].
 This required some ""exploration" to run on Docker successfully.
 
 [[./screenshot.png]]
@@ -54,3 +54,6 @@ Memory usage would have to also be checked over time with samples.
 ** Signal handling
 
 The final image has a [[https://github.com/krallin/tini][small init system (Tini)]] for handling signals (=control-c= on the terminal, etc.) without running continuously =docker stop insert_id_here=.
+
+
+graalvm is surely something to keep a look at: https://github.com/rimerosolutions/graalvm-experiments #
