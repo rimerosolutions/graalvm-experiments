@@ -1,4 +1,4 @@
-#+TITLE: Graalvm experiments with a basic spring boot application
+#+TITLE: Graalvm experiments with spring boot and docker
 
 This project is unpolished, it's not ready for copy-paste and pushing to PROD blindly...
 - Depending on how the code is written you may also run into [[https://www.graalvm.org/][GraalVM]] limitations by extending this program.
@@ -14,7 +14,7 @@ This required some ""exploration" to run on Docker successfully.
 * Requirements
 
 - A Linux desktop or server or virtualized environment.
-- A recent version of Docker with support for multi-stage builds.
+- A recent version of Docker with support for [[https://docs.docker.com/develop/develop-images/multistage-build/][multi-stage builds]].
 
 * Building
 
@@ -26,13 +26,13 @@ This required some ""exploration" to run on Docker successfully.
 
 ** Image size
 
-While the build process to native code takes a bit of time, the resulting image runs on top of a minimal busybox+glibc layer.
+While the build process to native code takes a bit of time, the resulting image runs on top of a minimal busybox+glibc layer (about 45MB).
 
 Traditionally, most Java docker images will be usually share similar characteristics:
 - At least 30MB+ (*Just for a JRE*) 
 - Couple of MBs for the base Linux system (Alpine, Busybox) unless using moderately bloated Linux images (Fedora, Debian, etc.)
 - Few MBs for dealing with [[https://www.gnu.org/software/libc/][GLibc]] required libraries, especially for apps that require networking ([[https://github.com/oracle/graal/issues/386][cryptic crashes]])
-- The Spring application size would mainly depend on how many dependencies you have and how complex the program is
+- The Spring application size would mainly depend on dependencies you have and how complex the program is
 
 #+BEGIN_SRC sh 
 [mrcheeks@localhost docker-graalvm]$ docker images
@@ -53,5 +53,5 @@ Memory usage would have to also be checked over time with samples.
 
 ** Signal handling
 
-The final image has a [[https://github.com/krallin/tini][small init system (Tini)]] for handling signals (=control-c= on the terminal, etc.) without running continuously =docker stop insert_id_here=.
+The final image has a [[https://github.com/krallin/tini][small init system (Tini)]] for handling signals (=control-c= on the terminal, etc.).
 
