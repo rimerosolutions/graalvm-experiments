@@ -1,0 +1,54 @@
+#+TITLE: Graalvm experiments with a basic spring boot application
+
+This project is not ready for copy-paste and pushing to PROD blindly...
+- Depending on how the code is written you may also run into Graalvm limitations by extending this program.
+- The main source of information that I found is the GraalVM Github issue tracker and some isolated articles online.
+
+
+* About the spring app
+I just did some experiments with Spring Boot and GraalVM based on a existing Github project.
+This required some ""exploration" to run on Docker successfully.
+
+* Requirements
+
+- A Linux desktop or server or virtualized environment.
+- A recent version of Docker with support for multi-stage builds.
+
+* Building
+
+=dockerbuild.sh= will trigger the docker build and create a `springdemo` image.
+- The spring boot application itself employs Gradle instead of Maven for speeding up the multi-stage build and not downloading all the jars on the internet.
+- More details can be found in the =Dockerfile= which is rather small
+
+* Resulting docker image
+
+** Image size
+
+While the build process to native code takes a bit of time, the resulting image runs on top of a minimal busybox+glibc layer.
+
+Traditionally, most Java docker images will be usually :
+- at least 40MB+ (Just for a JRE) 
+- couple of MBs for the base Linux system (Alpine, Busybox) unless using moderately bloated Linux images (Fedora, Debian, etc.)
+- Few MBs for dealing with glibc required libraries, especially for apps that require networking (cryptic GraalVM crashes)
+- The Spring application size would mainly depend on how many dependencies you have and how complex the program is
+
+#+BEGIN_SRC sh 
+[mrcheeks@localhost docker-graalvm]$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
+springdemo          latest              980375e9d972        About a minute ago   45.4MB
+<none>              <none>              c5b69e95b047        2 hours ago          47.1MB
+<none>              <none>              735802906281        2 hours ago          1.99GB
+<none>              <none>              2cb7f615546d        2 hours ago          1.68GB
+fedora              27                  7a2e85963474        9 days ago           236MB
+busybox             1.29.2-glibc        c041448940c8        6 weeks ago          4.42MB
+[mrcheeks@localhost docker-graalvm]$
+#+END_SRC
+
+** Speed
+
+While I haven't measured or benchmarked anything, it feels faster, especially the startup time.
+
+
+** Signal handling
+
+The final image has a small init system for handling signals (=control-c= on the terminal, etc.) without running continuously =docker stop insert_id_here=.
