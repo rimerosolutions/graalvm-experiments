@@ -55,5 +55,3 @@ Memory usage would have to also be checked over time with samples.
 
 The final image has a [[https://github.com/krallin/tini][small init system (Tini)]] for handling signals (=control-c= on the terminal, etc.) without running continuously =docker stop insert_id_here=.
 
-
-graalvm is surely something to keep a look at: https://github.com/rimerosolutions/graalvm-experiments #
