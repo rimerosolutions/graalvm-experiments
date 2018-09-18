@@ -19,14 +19,17 @@ This required some ""exploration" to run on Docker successfully.
 * Building
 
 =dockerbuild.sh= will trigger the docker build and create a `springdemo` image.
-- The spring boot application itself employs [[https://gradle.org/][Gradle]] instead of [[http://maven.apache.org/][Maven]] for speeding up the multi-stage build and not downloading all the jars on the internet.
+- The spring boot application employs [[https://gradle.org/][Gradle]] instead of [[http://maven.apache.org/][Maven]] for speeding up the multi-stage build and not downloading the entire internet itself
 - More details can be found in the =Dockerfile= which is rather small
 
 * Resulting docker image
 
 ** Image size
 
-While the build process to native code takes a bit of time, the resulting image runs on top of a minimal busybox+glibc layer (about 45MB).
+While the build process to native code takes a bit of time, the resulting image runs on top of a minimal =busybox+glibc= layer (about 45MB).
+I wasn't able to use =scratch=, other users run into similar problems.
+- https://github.com/oracle/graal/issues/386
+- https://github.com/oracle/graal/issues/624
 
 Traditionally, most Java docker images will be usually share similar characteristics:
 - At least 30MB+ (*Just for a JRE*) 
