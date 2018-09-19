@@ -15,17 +15,15 @@ ENV PATH=${PATH}:${JAVA_HOME}/bin
 
 ADD demo /demo
 
-RUN cd /demo && ./gradlew clean assemble; \
-    cd /demo && mkdir -p build/demo-0.0.1-SNAPSHOT; \
-    ./build.sh ; rm -rf ~/.m2 ; cp springdemo /usr/bin/springdemo; \
-    rm -rf /usr/lib/jvm; rm -rf ~/.m2 ; 
-
-RUN rm -rf ~/.gradle /demo
+RUN cd /demo && ./gradlew clean assemble \
+    && cd /demo && mkdir -p build/demo-0.0.1-SNAPSHOT  \
+    && ./build.sh && cp springdemo /usr/bin/springdemo  \
+    && rm -rf /opt/java ~/.m2 ~/.gradle /demo
 
 FROM busybox:1.29.2-glibc
 WORKDIR /usr/bin
 COPY --from=build-env /usr/bin/springdemo /usr/bin/springdemo
-ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-static-amd64 /usr/bin/tinit
-RUN chmod +x /usr/bin/tinit
-ENTRYPOINT [ "/usr/bin/tinit", "--", "/usr/bin/springdemo" ]
+RUN addgroup graalvm
+RUN adduser graalvmuser -H -D -G graalvm graalvm -s /bin/false
+USER graalvmuser
+ENTRYPOINT [ "/usr/bin/springdemo" ]
